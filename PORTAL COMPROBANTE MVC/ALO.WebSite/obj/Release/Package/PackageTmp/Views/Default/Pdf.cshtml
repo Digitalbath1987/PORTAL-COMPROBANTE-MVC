@@ -1,0 +1,358 @@
+﻿
+@model ALO.Entidades.PAGOS_VIEW
+@{
+    ViewBag.Title = "Portal de Comprobantes";
+    Layout = "~/Views/Shared/_Pdf.cshtml";
+}
+
+<style type="text/css">
+
+    .borde_cabecera {
+        border-width: 2px;
+        border-style: solid;
+    }
+    .borde_campos {
+        border-width: 1px;
+        border-style: solid;
+    }
+    .borde_hidden {
+        border-width: 1px;
+        border-style: none none none solid;
+    }
+
+ 
+    .container {
+        justify-content: center;
+        align-items: center width: 100vw;
+        height: 100vh;
+        display: flex;
+        flex-direction: row;
+    }
+</style>
+
+<div class="container">
+    <div id="HTML_CONTENIDO">
+        <table>
+            <tbody>
+
+                <tr>
+                    <td colspan="12" style="text-align: center;">
+                        <b>
+                            <p style="margin-bottom:10px;font-size:x-large">COMPROBANTE DE PAGO</p>
+                        </b>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>NRO.PAGO</td>
+                    <td>:</td>
+                    <td>@Model.ID_PAGO.ToString()</td>
+
+                    <td>SUCURSAL</td>
+                    <td>:</td>
+                    <td>@Model.LST_CAB.First().SUCURSAL</td>
+
+                    <td>CAJA</td>
+                    <td>:</td>
+                    <td>@Model.LST_CAB.First().NRO_CAJA</td>
+
+                    <td>FECHA</td>
+                    <td>:</td>
+                    <td>@Model.LST_CAB.First().FECHA_PAGO.ToString("dd-MM-yyyy")</td>
+                </tr>
+
+                <tr>
+                    <td>IDENTIFICADOR</td>
+                    <td>:</td>
+                    <td>@Model.LST_CAB.First().IDENTIFICADOR</td>
+
+                    <td>CLIENTE</td>
+                    <td>:</td>
+                    <td colspan="4">@Model.LST_CAB.First().NOMBRE</td>
+
+                    <td>HORA</td>
+                    <td>:</td>
+                    <td>@Model.LST_CAB.First().HORA_PAGO</td>
+                </tr>
+
+            </tbody>
+        </table>
+
+
+        <table style="font-size:xx-small">
+            <tbody>
+                <!-- ===========================================================================================================================-->
+                <!-- TABLA DEUDA                                                                                                                -->
+                <!-- ===========================================================================================================================-->
+                <tr>
+                    <td colspan="8"><u><b>DEUDA</b></u></td>
+                </tr>
+                <!-- ===========================================================================================================================-->
+                <!-- CABECERA TABLA DEUDA                                                                                                       -->
+                <!-- ===========================================================================================================================-->
+                <tr>
+                    <td class="borde_cabecera"> &nbsp; <strong>EMPRESA</strong></td>
+                    <td class="borde_cabecera"> &nbsp; <strong>OPERACION</strong></td>
+                    <td class="borde_cabecera"> &nbsp; <strong>PRODUCTO</strong></td>
+                    <td class="borde_cabecera"> &nbsp; <strong>SUB PRODUCTO</strong></td>
+                    <td class="borde_cabecera"> &nbsp; <strong>CAPITAL</strong></td>
+                    <td class="borde_cabecera"> &nbsp; <strong>INTERES</strong></td>
+                    <td class="borde_cabecera"> &nbsp; <strong>GASTOS COB.</strong></td>
+                    <td class="borde_cabecera"> &nbsp; <strong>OTROS GASTOS</strong></td>
+                </tr>
+
+                <!-- ===========================================================================================================================-->
+                <!-- CAMPOS TABLA DEUDA                                                                                                         -->
+                <!-- ===========================================================================================================================-->
+                @foreach (var DET in Model.LST_DET.ToList())
+                {
+                    <tr>
+                        <td class="borde_campos"> &nbsp; @DET.EMPRESA</td>
+                        <td class="borde_campos"> &nbsp; @DET.OPERACION</td>
+                        <td class="borde_campos"> &nbsp; @DET.PRODUCTO</td>
+                        <td class="borde_campos"> &nbsp; @DET.SUB_PRODUCTO</td>
+                        <td class="borde_campos"> &nbsp; @DET.CAPITAL.ToString("N1")</td>
+                        <td class="borde_campos"> &nbsp; @DET.INTERES.ToString("N1")</td>
+                        <td class="borde_campos"> &nbsp; @DET.GASTOS_COBRANZA.ToString("N1")</td>
+                        <td class="borde_campos"> &nbsp; @DET.OTROS_GASTOS.ToString("N1")</td>
+                    </tr>
+                }
+                <!-- ===========================================================================================================================-->
+                <!-- TOTALES TABLA DEUDA                                                                                                        -->
+                <!-- ===========================================================================================================================-->
+
+                <tr><td colspan="6"></td></tr>
+
+                <tr>
+                    <td colspan="3"></td>
+                    <td> &nbsp; <strong>SUB-TOTALES</strong></td>
+                    <td> &nbsp; <strong>@Model.LST_DET.Sum(c => c.CAPITAL).ToString("N1")</strong></td>
+                    <td> &nbsp; <strong>@Model.LST_DET.Sum(i => i.INTERES).ToString("N1")</strong></td>
+                    <td> &nbsp; <strong>@Model.LST_DET.Sum(g => g.GASTOS_COBRANZA).ToString("N1")</strong></td>
+                    <td> &nbsp; <strong>@Model.LST_DET.Sum(o => o.OTROS_GASTOS).ToString("N1")</strong></td>
+                </tr>
+
+
+                <tr><td colspan="8"></td></tr>
+
+                <tr>
+                    <td colspan="6"></td>
+                    <td><b>SUB-TOTALES</b></td>
+                    <td class="borde_cabecera">
+                        <strong>
+                            &nbsp; @Model.LST_DET.Sum(c => c.CAPITAL + c.INTERES + c.GASTOS_COBRANZA + c.OTROS_GASTOS).ToString("N1")
+                        </strong>
+                    </td>
+                </tr>
+                <!-- ===========================================================================================================================-->
+                <!-- FIN TABLA DEUDA                                                                                                            -->
+                <!-- ===========================================================================================================================-->
+                <!-- ===========================================================================================================================-->
+                <!-- TABLA JUICIO                                                                                                               -->
+                <!-- ===========================================================================================================================-->
+                <tr>
+                    <td colspan="6"><u><b>JUICIO</b></u></td>
+                </tr>
+
+                <!-- ===========================================================================================================================-->
+                <!-- CABECERA TABLA JUICIO                                                                                                       -->
+                <!-- ===========================================================================================================================-->
+                <tr>
+                    <td class="borde_cabecera"> &nbsp; EMPRESA</td>
+                    <td class="borde_cabecera"> &nbsp; OPERACION</td>
+                    <td class="borde_cabecera"> &nbsp; PRODUCTO</td>
+                    <td class="borde_cabecera"> &nbsp; SUB PRODUCTO</td>
+                    <td class="borde_cabecera"> &nbsp; C. PERSONALES</td>
+                    <td class="borde_cabecera"> &nbsp; C. PROCESALES</td>
+                </tr>
+
+                <!-- ===========================================================================================================================-->
+                <!-- CAMPOS TABLA JUICIO                                                                                                         -->
+                <!-- ===========================================================================================================================-->
+
+                    @foreach (var JUI in Model.LST_DET.ToList())
+                    {
+                        <tr>
+                            <td class="borde_campos"> &nbsp; @JUI.EMPRESA </td>
+                            <td class="borde_campos"> &nbsp; @JUI.OPERACION</td>
+                            <td class="borde_campos"> &nbsp; @JUI.PRODUCTO</td>
+                            <td class="borde_campos"> &nbsp; @JUI.SUB_PRODUCTO</td>
+                            <td class="borde_campos"> &nbsp; @JUI.COSTAS_PERSONALES.ToString("N1")</td>
+                            <td class="borde_campos"> &nbsp; @JUI.COSTAS_PROCESALES.ToString("N1")</td>
+                        </tr>
+                     }
+                
+
+                    <!-- ===========================================================================================================================-->
+                    <!-- TOTALES TABLA JUICIO                                                                                                        -->
+                    <!-- ===========================================================================================================================-->
+                    <tr><td colspan="6"></td></tr>
+
+                    <tr>
+                        <td colspan="3"></td>
+                        <td> &nbsp; SUB-TOTALES</td>
+                        <td> &nbsp; <strong>@Model.LST_DET.Sum(c => c.COSTAS_PERSONALES).ToString("N1")</strong></td>
+                        <td> &nbsp; <strong>@Model.LST_DET.Sum(c => c.COSTAS_PROCESALES).ToString("N1")</strong></td>
+                    </tr>
+
+                    <tr><td colspan="8"></td></tr>
+
+                    <tr>
+                        <td colspan="6"></td>
+                        <td><strong>SUB-TOTALES</strong></td>
+                        <td class="borde_cabecera"> &nbsp; <strong>  @Model.LST_DET.Sum(c => c.COSTAS_PERSONALES + c.COSTAS_PROCESALES).ToString("N1")</strong></td>
+                    </tr>
+                    <!-- ===========================================================================================================================-->
+                    <!-- FIN TABLA JUICIO                                                                                                            -->
+                    <!-- ===========================================================================================================================-->
+                    <!-- ===========================================================================================================================-->
+                    <!-- TABLA CONVENIO                                                                                                            -->
+                    <!-- ===========================================================================================================================-->
+                    <tr><td colspan="6"><u><b>CONVENIOS</b></u></td></tr>
+
+
+                    <!-- ===========================================================================================================================-->
+                    <!-- CABECERA TABLA CONVENIO                                                                                                    -->
+                    <!-- ===========================================================================================================================-->
+                    <tr>
+                        <td class="borde_cabecera"> &nbsp; <strong>EMPRESA</strong></td>
+                        <td class="borde_cabecera"> &nbsp; <strong>OPERACION</strong></td>
+                        <td class="borde_cabecera"> &nbsp; <strong>PRODUCTO</strong></td>
+                        <td class="borde_cabecera"> &nbsp; <strong>SUB PRODUCTO</strong></td>
+                        <td class="borde_cabecera"> &nbsp; <strong>HON. ATRASO</strong></td>
+                        <td class="borde_cabecera"> &nbsp; <strong>INT. ATRASO</strong></td>
+                    </tr>
+
+                    <!-- ===========================================================================================================================-->
+                    <!-- CAMPOS TABLA CONVENIO                                                                                                      -->
+                    <!-- ===========================================================================================================================-->
+                    @foreach (var DET in Model.LST_DET.ToList())
+                    {
+                        <tr>
+                            <td class="borde_campos"> &nbsp; @DET.EMPRESA</td>
+                            <td class="borde_campos"> &nbsp; @DET.OPERACION</td>
+                            <td class="borde_campos"> &nbsp; @DET.PRODUCTO</td>
+                            <td class="borde_campos"> &nbsp; @DET.SUB_PRODUCTO</td>
+                            <td class="borde_campos"> &nbsp; @DET.HONORARIO_ATRASO.ToString("N1")</td>
+                            <td class="borde_campos"> &nbsp; @DET.INTERES_ATRASO.ToString("N1")</td>
+                        </tr>
+                    }
+
+                    <!-- ===========================================================================================================================-->
+                    <!-- TOTALES TABLA CONVENIO                                                                                                     -->
+                    <!-- ===========================================================================================================================-->
+                    <tr><td colspan="6"></td></tr>
+
+                    <tr>
+                        <td colspan="3"></td>
+                        <td> &nbsp; SUB-TOTALES</td>
+                        <td> &nbsp; <strong>@Model.LST_DET.Sum(c => c.HONORARIO_ATRASO).ToString("N1") </strong></td>
+                        <td> &nbsp; <strong>@Model.LST_DET.Sum(c => c.INTERES_ATRASO).ToString("N1") </strong></td>
+                    </tr>
+
+
+
+                    <tr><td colspan="8"></td></tr>
+
+                    <tr>
+                        <td colspan="6"></td>
+                        <td><strong>SUB-TOTALES  </strong></td>
+                        <td class="borde_cabecera">
+                            &nbsp;
+                            <strong>
+                                @Model.LST_DET.Sum(c => c.HONORARIO_ATRASO + c.INTERES_ATRASO).ToString("N1")
+                            </strong>
+                        </td>
+                    </tr>
+                    <!-- ===========================================================================================================================-->
+                    <!-- FIN TABLA CONVENIO                                                                                                         -->
+                    <!-- ===========================================================================================================================-->
+                    <!-- ===========================================================================================================================-->
+                    <!-- SEGUROS                                                                                                                    -->
+                    <!-- ===========================================================================================================================-->
+                    <tr>
+                        <td colspan="6"></td>
+                        <td><strong>SEGUROS</strong></td>
+                        <!-- ========================================averiguar===================================================-->
+                        <td class="borde_cabecera"> &nbsp; <strong>0</strong></td>
+                    </tr>
+                    <tr><td colspan="8">&nbsp; </td></tr>
+                    <!-- ===========================================================================================================================-->
+                    <!-- TOTAL A PAGAR                                                                                                              -->
+                    <!-- ===========================================================================================================================-->
+                    <tr>
+                        <td colspan="6"></td>
+                        <td><strong>PAGAR</strong></td>
+                        <td class="borde_cabecera">
+                            &nbsp;
+                            <strong>
+                                @Model.LST_DET.Sum(c => c.CAPITAL + c.INTERES + c.GASTOS_COBRANZA + c.OTROS_GASTOS + c.HONORARIO_ATRASO + c.INTERES_ATRASO + c.COSTAS_PERSONALES + c.COSTAS_PROCESALES).ToString("N1")
+                            </strong>
+                        </td>
+                    </tr>
+                    <tr><td colspan="8">&nbsp; </td></tr>
+                </tbody>
+        </table>
+
+
+
+        <!-- ===========================================================================================================================-->
+        <!-- TABLA OPERACIONES                                                                                                          -->
+        <!-- ===========================================================================================================================-->
+        <table style="font-size:xx-small">
+            <tbody>
+                <tr>
+                    <td colspan="8">
+                        <u>
+                            <b>LAS OPERACIONES CANCELADAS PERTENECEN AL SIGUIENTE DETALLE</b>
+                        </u>
+                    </td>
+                </tr>
+                <!-- ===========================================================================================================================-->
+                <!-- CABCERA TABLA OPERACIONES                                                                                                  -->
+                <!-- ===========================================================================================================================-->
+                <tr>
+                    <td class="borde_cabecera"> &nbsp; <strong>EMPRESA</strong></td>
+                    <td class="borde_cabecera"> &nbsp; <strong>OPERACION</strong></td>
+                    <td class="borde_cabecera"> &nbsp; <strong>PRODUCTO</strong></td>
+                    <td class="borde_cabecera"> &nbsp; <strong>SUB_PRODUCTO</strong></td>
+                    <td class="borde_cabecera"> &nbsp; <strong>CUOTA</strong></td>
+                    <td class="borde_cabecera"> &nbsp; <strong>FECHA VENCIMIENTO</strong></td>
+                    <td class="borde_cabecera"> &nbsp; <strong>TIPO PAGO</strong></td>
+                    <td class="borde_cabecera"> &nbsp; <strong>FECHA DOCUMENTO</strong></td>
+                </tr>
+                <!-- ===========================================================================================================================-->
+                <!-- CAMPOS TABLA OPERACIONES                                                                                                   -->
+                <!-- ===========================================================================================================================-->
+                @foreach (var OPE in Model.LST_DET.ToList())
+                {
+                    <tr>
+                        <td class="borde_campos"> &nbsp; @OPE.EMPRESA</td>
+                        <td class="borde_campos"> &nbsp; @OPE.OPERACION</td>
+                        <td class="borde_campos"> &nbsp; @OPE.PRODUCTO</td>
+                        <td class="borde_campos"> &nbsp; @OPE.SUB_PRODUCTO</td>
+                        <td class="borde_campos"> &nbsp; @OPE.CUOTA.ToString()</td>
+                        <td class="borde_campos"> &nbsp; @OPE.FECHA_VENCIMIENTO</td>
+                        <td class="borde_campos"> &nbsp; @OPE.TIPO_PAGO</td>
+                        <td class="borde_campos"> &nbsp; @OPE.FECHA_DOCUMENTO</td>
+                    </tr>
+                }
+
+                <tr><td colspan="8">&nbsp; </td></tr>
+                <tr><td colspan="8">&nbsp; </td></tr>
+                <tr><td colspan="8">&nbsp; </td></tr>
+                <tr><td colspan="8">&nbsp; </td></tr>
+            </tbody>
+        </table>
+
+
+        <footer>
+            <div colspan="12" style="text-align: center;">
+                <p style="margin-top:10px;">V.B Y TIMBRE DE CAJA</p>
+            </div>
+        </footer>
+
+    </div>
+</div>
+
+
